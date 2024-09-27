@@ -1,9 +1,11 @@
+
+## EX NO-02: Implementation of Perceptron for Binary Classification
+
 <H3>Name:KEERTHANA S</H3>
 <H3>Register no.:212223240070</H3>
 <H3>Date:16-09-24</H3>
 <H3>Experiment No. 2 </H3>
 
-## Implementation of Perceptron for Binary Classification
 ### AIM:
 To implement a perceptron for classification using Python<BR>
 
