@@ -1,9 +1,9 @@
+<H1 ALIGN =CENTER> Implementation of Perceptron for Binary Classification</H1>
 
-## EX NO-02: Implementation of Perceptron for Binary Classification
-
-<H3>Name:KEERTHANA S</H3>
-<H3>Register no.:212223240070</H3>
-<H3>Date:16-09-24</H3
+<H3>NAME: KEERTHANA S</H3>
+<H3>REGISTER NO.: 212223240070</H3>
+<H3>EX. NO.2</H3>
+<H3>DATE:</H3>
 
 ### AIM:
 To implement a perceptron for classification using Python<BR>
