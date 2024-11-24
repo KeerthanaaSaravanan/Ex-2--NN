@@ -113,6 +113,8 @@ plt.show()
 
 ### OUTPUT:
 ![image](https://github.com/user-attachments/assets/d8868768-b557-4c3c-8afe-ff21cbdd5e8c)
+
+
 ![image](https://github.com/user-attachments/assets/71e7c59a-a757-4192-8024-a5cd62e83f95)
 
 ### RESULT:
