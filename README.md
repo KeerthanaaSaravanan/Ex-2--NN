@@ -1,9 +1,8 @@
-<H1 ALIGN =CENTER> Implementation of Perceptron for Binary Classification</H1>
-
+# Implementation of Perceptron for Binary Classification
 <H3>NAME: KEERTHANA S</H3>
 <H3>REGISTER NO.: 212223240070</H3>
 <H3>EX. NO.2</H3>
-<H3>DATE:</H3>
+<H3>DATE:07.09.24</H3>
 
 ### AIM:
 To implement a perceptron for classification using Python<BR>
@@ -43,84 +42,78 @@ STEP 9:For ‘N ‘ iterations ,do the following:<BR>
         v(i) = w(i)*x(i)<BR>
          
         W (i+i)= W(i) + learning_rate*(y(i)-t(i))*x(i)<BR>
+        
 STEP 10:Plot the error for each iteration <BR>
 STEP 11:Print the accuracy<BR>
 ### PROGRAM:
-```
+```py
+# Import Libraries
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 class Perceptron:
-    def __init__(self,learning_rate=0.1):
+    def __init__(self, learning_rate=0.1):
         self.learning_rate = learning_rate
-        self._b = 0.0  #y-intercept
-        self._w = None # weights assigned to input features
-        self.misclassified_samples = []
-    def fit(self, x: np.array, y: np.array, n_iter=10):
-        self._b = 0.0
-        self._w = np.zeros(x.shape[1])
-        self.misclassified_samples = []
-        for _ in range(n_iter):
-            # counter of the errors during this training interaction
-            errors = 0
-            for xi, yi in zip(x,y):
-                update = self.learning_rate * (yi - self.predict(xi))
-                self._b += update
-                self._w += update * xi
-                errors += int(update != 0.0)
-            self.misclassified_samples.append(errors)
-    def f(self, x: np.array) -> float:
-        return np.dot(x, self._w) + self._b
-    def predict(self, x: np.array):
-        return np.where(self.f(x) >= 0,1,-1)
-```
-```
-df = pd.read_csv("/content/iris (1).csv")
-print(df.head())
-# extract the label column
-y = df.iloc[:,4].values
-# extract features
-x = df.iloc[:,0:3].values
-#reduce dimensionality of the data
-x = x[0:100, 0:2]
-y = y[0:100]
-#plot Iris Setosa samples
-plt.scatter(x[:50,0], x[:50,1], color='orange', marker='o', label='Setosa')
-#plot Iris Versicolour samples
-plt.scatter(x[50:100,0], x[50:100,1], color='blue', marker='x', label='Versicolour')
-#show the legend
-plt.xlabel("Sepal length")
-plt.ylabel("Petal length")
-plt.legend(loc='upper left')
-#show the plot
-plt.show()
+        self._w = None  # weights assigned to input features
+        self._b = 0.0  # bias
+        self.misclassified_samples = []  # to track misclassifications during training
 
-y = np.where(y == 'Iris-Setosa',1,-1)
-x[:,0] = (x[:,0] - x[:,0].mean()) / x[:,0].std()
-x[:,1] = (x[:,1] - x[:,1].mean()) / x[:,1].std()
-# split the data
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25,random_state=0)
-# train the model
+    def fit(self, X, y, n_iter=10):
+        self._w = np.zeros(X.shape[1])
+        for _ in range(n_iter):
+            errors = 0
+            for xi, yi in zip(X, y):
+                update = self.learning_rate * (yi - self.predict(xi))
+                self._w += update * xi
+                self._b += update
+                errors += int(update != 0.0)
+            self.misclassified_samples.append(errors)  # Store the number of errors after each epoch
+            print(f"Epoch {_+1}, Errors: {errors}")
+
+    def predict(self, X):
+        return np.where(np.dot(X, self._w) + self._b >= 0, 1, -1)
+
+# Load the dataset
+df = pd.read_csv("/content/Iris.csv")
+
+# Extract features and labels
+X = df.iloc[:, :2].values  # using only first two features for simplicity
+y = df.iloc[:, 4].values  # target labels
+
+# Convert string labels to numerical values
+y = np.where(y == 'Iris-Setosa', 1, -1)  # convert to binary labels
+
+# Feature scaling (standardizing the features)
+X[:, 0] = (X[:, 0] - X[:, 0].mean()) / X[:, 0].std()
+X[:, 1] = (X[:, 1] - X[:, 1].mean()) / X[:, 1].std()
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Train the Perceptron model
 classifier = Perceptron(learning_rate=0.01)
-classifier.fit(x_train, y_train)
-print("accuracy",accuracy_score(classifier.predict(x_test),y_test)*100)
-# plot the number of errors during each iteration
-plt.plot(range(1,len(classifier.misclassified_samples)+1),classifier.misclassified_samples, marker='o')
+classifier.fit(X_train, y_train)
+
+# Test the model
+y_pred = classifier.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred) * 100
+print(f"Accuracy: {accuracy:.2f}%")
+
+# Plot the number of errors during each iteration
+plt.plot(range(1, len(classifier.misclassified_samples) + 1), classifier.misclassified_samples, marker='o')
 plt.xlabel('Epoch')
 plt.ylabel('Errors')
+plt.title('Errors During Training')
 plt.show()
+
 ```
 
 ### OUTPUT:
-#### DATASET
-![EX-02](https://github.com/user-attachments/assets/c3634e64-985e-47c9-b5bc-bb995bf32648)
-![EX-02](https://github.com/user-attachments/assets/ab9bd0a2-db92-42a8-85ea-86106cc2d1c7)
-![EX-02](https://github.com/user-attachments/assets/f64ea16e-3c90-4d2d-97a6-024b8ed1ccd3)
-![EX-02](https://github.com/user-attachments/assets/ecead8d4-beae-4398-bdcb-78568672b5cc)
+![image](https://github.com/user-attachments/assets/d8868768-b557-4c3c-8afe-ff21cbdd5e8c)
+![image](https://github.com/user-attachments/assets/71e7c59a-a757-4192-8024-a5cd62e83f95)
 
 ### RESULT:
  Thus, a single layer perceptron model is implemented using python to classify Iris data set.
