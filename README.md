@@ -47,7 +47,6 @@ STEP 10:Plot the error for each iteration <BR>
 STEP 11:Print the accuracy<BR>
 ### PROGRAM:
 ```py
-# Import Libraries
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -57,56 +56,48 @@ from sklearn.metrics import accuracy_score
 class Perceptron:
     def __init__(self, learning_rate=0.1):
         self.learning_rate = learning_rate
-        self._w = None  # weights assigned to input features
-        self._b = 0.0  # bias
-        self.misclassified_samples = []  # to track misclassifications during training
+        self.weights = None
+        self.bias = 0
 
-    def fit(self, X, y, n_iter=10):
-        self._w = np.zeros(X.shape[1])
-        for _ in range(n_iter):
-            errors = 0
+    def fit(self, X, y, epochs=10):
+        self.weights = np.zeros(X.shape[1])
+        self.errors = []
+
+        for _ in range(epochs):
+            error_count = 0
             for xi, yi in zip(X, y):
                 update = self.learning_rate * (yi - self.predict(xi))
-                self._w += update * xi
-                self._b += update
-                errors += int(update != 0.0)
-            self.misclassified_samples.append(errors)  # Store the number of errors after each epoch
-            print(f"Epoch {_+1}, Errors: {errors}")
+                self.weights += update * xi
+                self.bias += update
+                error_count += int(update != 0.0)
+            self.errors.append(error_count)
+            print(f"Epoch {_+1}, Errors: {error_count}")
 
     def predict(self, X):
-        return np.where(np.dot(X, self._w) + self._b >= 0, 1, -1)
+        return np.where(np.dot(X, self.weights) + self.bias >= 0, 1, -1)
 
-# Load the dataset
-df = pd.read_csv("/content/Iris.csv")
+# Load and preprocess the dataset
+data = pd.read_csv("/content/Iris_NN2.csv")
+X = data.iloc[:, :2].values  # Use first two features
+y = np.where(data.iloc[:, 4] == 'Iris-Setosa', 1, -1)  # Binary labels
 
-# Extract features and labels
-X = df.iloc[:, :2].values  # using only first two features for simplicity
-y = df.iloc[:, 4].values  # target labels
+# Standardize features
+X = (X - X.mean(axis=0)) / X.std(axis=0)
 
-# Convert string labels to numerical values
-y = np.where(y == 'Iris-Setosa', 1, -1)  # convert to binary labels
-
-# Feature scaling (standardizing the features)
-X[:, 0] = (X[:, 0] - X[:, 0].mean()) / X[:, 0].std()
-X[:, 1] = (X[:, 1] - X[:, 1].mean()) / X[:, 1].std()
-
-# Split the dataset into training and testing sets
+# Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
 
-# Train the Perceptron model
-classifier = Perceptron(learning_rate=0.01)
-classifier.fit(X_train, y_train)
+# Train and test Perceptron
+model = Perceptron(learning_rate=0.01)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print(f"Accuracy: {accuracy_score(y_test, y_pred) * 100:.2f}%")
 
-# Test the model
-y_pred = classifier.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred) * 100
-print(f"Accuracy: {accuracy:.2f}%")
-
-# Plot the number of errors during each iteration
-plt.plot(range(1, len(classifier.misclassified_samples) + 1), classifier.misclassified_samples, marker='o')
+# Plot errors
+plt.plot(range(1, len(model.errors) + 1), model.errors, marker='o')
 plt.xlabel('Epoch')
 plt.ylabel('Errors')
-plt.title('Errors During Training')
+plt.title('Training Errors')
 plt.show()
 
 ```
